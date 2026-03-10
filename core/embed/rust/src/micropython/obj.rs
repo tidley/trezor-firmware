@@ -475,6 +475,7 @@ impl Obj {
     }
 }
 
+#[cfg(test)]
 mod tests {
     use super::*;
 
