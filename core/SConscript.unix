@@ -610,8 +610,10 @@ qstr_preprocessed = env.PreprocessQstr(
     target='genhdr/qstrdefs.preprocessed.h',
     source=[qstr_micropython, qstr_protobuf, qstr_collected, qstr_extra])
 
-qstr_generated = env.GenerateQstrDefs(
-    target='genhdr/qstrdefs.generated.h', source=qstr_preprocessed)
+qstr_generated = env.Command(
+    target='genhdr/qstrdefs.generated.h',
+    source=qstr_preprocessed,
+    action='$MAKEQSTRDATA $SOURCE > $TARGET', )
 
 env.Ignore(qstr_collected, qstr_generated)
 

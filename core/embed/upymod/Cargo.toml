@@ -1,0 +1,40 @@
+[package]
+name = "upymod"
+version = "0.0.0"
+edition = "2024"
+links = "upymod"
+
+[build-dependencies]
+cbuild = { path = "../cbuild" }
+
+[dependencies]
+models = { path = "../models" }
+rtl = { path = "../rtl" }
+sec = { path = "../sec" }
+io = { path = "../io" }
+
+[features]
+
+# --------------------------------------------------------------------------
+# MCU features
+# --------------------------------------------------------------------------
+
+mcu_stm32f4 = ["io/mcu_stm32f4", "mcu_stm32"]
+mcu_stm32u58 = ["io/mcu_stm32u58", "mcu_stm32u5"]
+mcu_stm32u5g = ["io/mcu_stm32u5g", "mcu_stm32u5"]
+
+# --------------------------------------------------------------------------
+# Selectable components
+# --------------------------------------------------------------------------
+
+enable_source_line = []
+emulator = ["io/emulator"]
+
+# --------------------------------------------------------------------------
+# Automatically derived features (do not enable from outside)
+# --------------------------------------------------------------------------
+
+default = ["sec/storage"]
+
+mcu_stm32u5 = ["mcu_stm32"]
+mcu_stm32 = []

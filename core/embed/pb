@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+usage() {
+    echo "Usage: pb <package> <platform> <model> [release|--release]"
+    echo "  package:  kernel | secmon | prodtest | bootloader | bootloader_ci | boardloader | coreapp | unix"
+    echo "  platform: hw | emu"
+    echo "  model:    t2t1 | t2b1 | t3b1 | t3t1 | t3w1 | d001 | d002"
+    echo "  release:  optional, build with cargo --release"
+}
+
+if [[ $# -lt 3 || $# -gt 4 ]]; then
+    usage
+    exit 1
+fi
+
+package="$1"
+platform="$2"
+model="$3"
+release_flag=""
+
+if [[ $# -eq 4 ]]; then
+    case "$4" in
+        release|--release)
+            release_flag="--release"
+            ;;
+        *)
+            echo "Invalid release flag: $4"
+            usage
+            exit 1
+            ;;
+    esac
+fi
+
+case "$package" in
+    kernel|secmon|prodtest|bootloader|bootloader_ci|boardloader|coreapp|unix) ;;
+    *)
+        echo "Invalid package: $package"
+        usage
+        exit 1
+        ;;
+esac
+
+case "$platform" in
+    hw|emu) ;;
+    *)
+        echo "Invalid platform: $platform"
+        usage
+        exit 1
+        ;;
+esac
+
+case "$model" in
+    t2t1|t2b1|t3b1|t3t1|t3w1|d001|d002) ;;
+    *)
+        echo "Invalid model: $model"
+        usage
+        exit 1
+        ;;
+esac
+
+case "$model" in
+    t2t1|t2b1|d001)
+        target="thumbv7em-none-eabihf"
+        ;;
+    t3b1|t3t1)
+        target="thumbv8m.main-none-eabihf"
+        ;;
+    t3w1|d002)
+        target="thumbv8m.main-none-eabihf"
+        ;;
+esac
+
+if [[ "$platform" == "emu" ]]; then
+    emulator_feature="emulator"
+    target=""
+else
+    emulator_feature=""
+    case "$model" in
+        t2t1|t2b1|d001)
+            target="thumbv7em-none-eabihf"
+            ;;
+        t3b1|t3t1)
+            target="thumbv8m.main-none-eabihf"
+            ;;
+        t3w1|d002)
+            target="thumbv8m.main-none-eabihf"
+            ;;
+    esac
+fi
+
+model_feature="model_${model}"
+features="${model_feature},${emulator_feature}"
+
+cmd=(cargo build -p "$package" -Zbuild-std --features "$features")
+
+if [[ -n "$release_flag" ]]; then
+    cmd+=("$release_flag")
+fi
+
+if [[ -n "$target" ]]; then
+    cmd=(cargo build -p "$package" --target "$target" -Zbuild-std --features "$features")
+    if [[ -n "$release_flag" ]]; then
+        cmd+=("$release_flag")
+    fi
+fi
+
+#if command -v sccache >/dev/null 2>&1; then
+#    export RUSTC_WRAPPER=sccache
+#fi
+
+echo "Running: ${cmd[*]}"
+exec "${cmd[@]}"

@@ -1,0 +1,13 @@
+- build micropython code and qstrings in upymod crate
+- add coreapp crate (in project/firmware folder)
+
+- add remaining c sources (tropic, ble, nrf, ..)
+- add/specify features for all models
+
+- post build steps (header update)
+- export/link secmon api object
+
+- resolve cyclic dependencies
+- implement panic handler in kernel, secmon, boardloader and bootloader_ci
+
+
