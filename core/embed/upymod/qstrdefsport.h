@@ -3,7 +3,9 @@
 // do not edit manually!
 // fmt: off
 
+#ifndef QSTR_PROCESSING
 #error This header should not be part of the build, its purpose is only to add missed Qstrings
+#endif
 
 // explanation:
 // uPy collects string literals and symbol names from all frozen modules, and
