@@ -3,6 +3,7 @@
  */
 
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 
@@ -15,7 +16,7 @@
 #include "util.h"
 #include "zkp_bip340.h"
 
-#define NOSTR_JSON_MAX 4096
+#define NOSTR_JSON_MAX 1024
 
 static bool nostr_json_append_char(char *dst, size_t dst_size, size_t *pos,
                                    char c) {
@@ -37,7 +38,7 @@ static bool nostr_json_append_str(char *dst, size_t dst_size, size_t *pos,
 static bool nostr_json_append_u32(char *dst, size_t dst_size, size_t *pos,
                                   uint32_t v) {
   char tmp[16];
-  mini_snprintf(tmp, sizeof(tmp), "%lu", (unsigned long)v);
+  snprintf(tmp, sizeof(tmp), "%lu", (unsigned long)v);
   return nostr_json_append_str(dst, dst_size, pos, tmp);
 }
 
@@ -82,7 +83,7 @@ static bool nostr_json_append_escaped(char *dst, size_t dst_size, size_t *pos,
       default:
         if (c < 0x20) {
           char esc[7];
-          mini_snprintf(esc, sizeof(esc), "\\u%04x", c);
+          snprintf(esc, sizeof(esc), "\\u%04x", c);
           if (!nostr_json_append_str(dst, dst_size, pos, esc)) return false;
         } else {
           if (!nostr_json_append_char(dst, dst_size, pos, (char)c)) return false;
@@ -118,6 +119,20 @@ void fsm_msgNostrSignEvent(const NostrSignEvent *msg) {
 
   CHECK_INITIALIZED
   CHECK_PIN
+  CHECK_PARAM(msg->tags_count <= 6, _("Too many tags"));
+  CHECK_PARAM(strlen(msg->content) <= 256, _("Content too long"));
+
+  for (size_t i = 0; i < msg->tags_count; i++) {
+    const NostrTag *tag = &msg->tags[i];
+    CHECK_PARAM(strlen(tag->key) <= 24, _("Tag key too long"));
+    if (tag->has_value) {
+      CHECK_PARAM(strlen(tag->value) <= 80, _("Tag value too long"));
+    }
+    CHECK_PARAM(tag->extra_count <= 2, _("Too many tag values"));
+    for (size_t j = 0; j < tag->extra_count; j++) {
+      CHECK_PARAM(strlen(tag->extra[j]) <= 80, _("Tag extra too long"));
+    }
+  }
 
   const HDNode *node =
       fsm_getDerivedNode(SECP256K1_NAME, msg->address_n, msg->address_n_count, NULL);

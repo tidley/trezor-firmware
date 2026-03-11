@@ -143,6 +143,7 @@ OBJS += protob/messages-common.pb.o
 OBJS += protob/messages-crypto.pb.o
 OBJS += protob/messages-debug.pb.o
 OBJS += protob/messages-management.pb.o
+OBJS += protob/messages-nostr.pb.o
 
 ifneq ($(BITCOIN_ONLY),1)
 OBJS += ../vendor/trezor-crypto/cash_addr.o

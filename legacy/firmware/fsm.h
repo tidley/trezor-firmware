@@ -27,6 +27,7 @@
 #include "messages-ethereum.pb.h"
 #include "messages-management.pb.h"
 #include "messages-nem.pb.h"
+#include "messages-nostr.pb.h"
 #include "messages-stellar.pb.h"
 #include "messages.pb.h"
 
@@ -146,6 +147,10 @@ void fsm_msgStellarAllowTrustOp(const StellarAllowTrustOp *msg);
 void fsm_msgStellarAccountMergeOp(const StellarAccountMergeOp *msg);
 void fsm_msgStellarManageDataOp(const StellarManageDataOp *msg);
 void fsm_msgStellarBumpSequenceOp(const StellarBumpSequenceOp *msg);
+
+// nostr
+void fsm_msgNostrGetPubkey(const NostrGetPubkey *msg);
+void fsm_msgNostrSignEvent(const NostrSignEvent *msg);
 
 void fsm_msgRebootToBootloader(void);
 
