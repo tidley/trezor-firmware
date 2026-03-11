@@ -490,6 +490,7 @@ bool fsm_layoutDifferentPathsWarning(void) {
 #include "fsm_msg_common.h"
 #include "fsm_msg_crypto.h"
 #include "fsm_msg_debug.h"
+#include "fsm_msg_nostr.h"
 
 #if !BITCOIN_ONLY
 

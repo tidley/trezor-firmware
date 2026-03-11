@@ -14,7 +14,6 @@ SKIPPED_MESSAGES := Cardano DebugMonero Eos Monero Ontology Ripple SdProtect Tez
 	ChangeLanguage DataChunkRequest DataChunkAck Thp \
 	SetBrightness DebugLinkOptigaSetSecMax DebugLinkSetLogFilter \
 	BenchmarkListNames BenchmarkRun BenchmarkNames BenchmarkResult \
-	NostrGetPubkey NostrPubkey NostrSignEvent NostrEventSignature \
 	BleUnpair PaymentNotification Evolu \
 	GetSerialNumber SerialNumber \
 	TelemetryGet, Telemetry
@@ -25,7 +24,7 @@ endif
 
 PROTO_NAMES = messages messages-bitcoin messages-common messages-crypto messages-debug \
 	messages-ethereum messages-definitions messages-management messages-nem \
-	messages-stellar options
+	messages-stellar messages-nostr options
 
 PROTO_OPTIONS = $(PROTO_NAMES:=.options)
 PROTO_COMPILED = $(PROTO_NAMES:=.pb)
